@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Dilly's Order">
+<meta name="theme-color" content="#fbfbf7">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-180.png">
+<title>Dilly's Kitchen – Finger Buffet Order</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --green:#a9bd4c; --green-d:#7f9330; --green-l:#f1f5df; --red:#d93636;
+    --ink:#262a22; --mute:#6c7064; --line:#e3e6da; --bg:#fbfbf7; --card:#fff;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Nunito,system-ui,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+  header{text-align:center;padding:calc(22px + env(safe-area-inset-top)) 16px 10px}
+  header h1{margin:0;font-weight:900;font-size:clamp(30px,7vw,46px);color:var(--green);letter-spacing:.5px}
+  
+  header p{margin:6px 0 0;color:var(--mute);font-size:14px}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 14px 140px;display:grid;grid-template-columns:1fr;gap:18px}
+  @media(min-width:900px){.wrap{grid-template-columns:1fr 340px;padding-bottom:40px}}
+  section{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px 16px 18px;margin-bottom:16px}
+  h2{margin:0 0 4px;font-size:18px;font-weight:800;color:var(--red);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  h2 .badge{font-size:12px;font-weight:800;color:#fff;background:var(--green-d);padding:2px 9px;border-radius:99px}
+  h2 .badge.done{background:var(--green)}
+  h2 .badge.over{background:var(--red)}
+  .hint{margin:0 0 12px;color:var(--mute);font-size:13.5px}
+  .fields{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .fields .full{grid-column:1/-1}
+  label.f{display:flex;flex-direction:column;font-size:12.5px;font-weight:700;color:var(--mute);gap:4px}
+  input[type=text],input[type=tel],input[type=email],input[type=date],input[type=time],input[type=number],textarea{
+    font:inherit;font-size:15px;color:var(--ink);padding:10px 11px;border:1px solid var(--line);border-radius:10px;background:#fff;width:100%}
+  textarea{min-height:64px;resize:vertical}
+  input:focus,textarea:focus{outline:2px solid var(--green);border-color:transparent}
+  .stepper{display:flex;align-items:center;gap:8px}
+  .stepper button{width:40px;height:40px;border-radius:10px;border:1px solid var(--line);background:#fff;font-size:20px;font-weight:800;cursor:pointer;color:var(--green-d)}
+  .stepper input{text-align:center;font-weight:800;font-size:17px}
+  .filters{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 10px}
+  .chip{border:1px solid var(--line);background:#fff;border-radius:99px;padding:5px 12px;font:inherit;font-size:13px;font-weight:700;cursor:pointer;color:var(--mute)}
+  .chip.on{background:var(--green-l);border-color:var(--green);color:var(--green-d)}
+  .list{display:grid;grid-template-columns:1fr;gap:6px}
+  @media(min-width:620px){.list{grid-template-columns:1fr 1fr}}
+  .item{display:flex;gap:10px;align-items:flex-start;padding:10px 11px;border:1px solid var(--line);border-radius:12px;cursor:pointer;user-select:none;background:#fff;transition:background .12s,border-color .12s}
+  .item:hover{border-color:#cfd6b5}
+  .item.sel{background:var(--green-l);border-color:var(--green)}
+  .item.dis{opacity:.42;cursor:not-allowed}
+  .item.hide{display:none}
+  .tick{flex:none;width:22px;height:22px;border-radius:7px;border:2px solid #cfd3c4;display:grid;place-items:center;margin-top:1px;background:#fff}
+  .radio .tick{border-radius:50%}
+  .item.sel .tick{background:var(--green-d);border-color:var(--green-d)}
+  .item.sel .tick::after{content:"";width:6px;height:11px;border:solid #fff;border-width:0 2.5px 2.5px 0;transform:rotate(45deg) translate(-1px,-1px)}
+  .radio .item.sel .tick::after{width:8px;height:8px;border:0;border-radius:50%;background:#fff;transform:none}
+  .name{font-size:14.5px;font-weight:700;line-height:1.3}
+  .tags{display:inline-flex;gap:3px;margin-left:4px;vertical-align:1px}
+  .tag{font-size:10px;font-weight:800;color:var(--green-d);border:1px solid #cdd8a0;border-radius:5px;padding:0 4px;line-height:15px}
+  .sub{margin-top:6px;display:flex;gap:5px;flex-wrap:wrap}
+  .sub .chip{padding:3px 10px;font-size:12px}
+  .sub-label{font-size:12px;color:var(--mute);width:100%;margin-top:2px}
+  .included{display:flex;gap:8px;align-items:center;padding:9px 11px;border-radius:12px;background:#f6f6f0;border:1px dashed #d8dccb;font-size:14px;font-weight:700;margin-bottom:10px}
+  .included b{color:var(--green-d);font-size:12px;font-weight:800;margin-left:auto}
+  .grp{font-size:13px;font-weight:800;color:var(--ink);margin:12px 0 6px}
+  .price-tag{margin-left:auto;font-size:12px;font-weight:800;color:var(--red);white-space:nowrap}
+  /* summary */
+  aside .card{position:sticky;top:14px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px}
+  aside h3{margin:0 0 10px;font-size:17px;font-weight:900}
+  .row{display:flex;justify-content:space-between;font-size:14px;padding:4px 0;color:var(--mute)}
+  .row b{color:var(--ink)}
+  .total{display:flex;justify-content:space-between;align-items:baseline;border-top:2px solid var(--ink);margin-top:8px;padding-top:10px}
+  .total span{font-weight:800}
+  .total b{font-size:26px;font-weight:900}
+  .pp{font-size:13px;color:var(--mute);text-align:right}
+  .checks{margin:12px 0 0;padding:0;list-style:none;font-size:13px}
+  .checks li{padding:3px 0;display:flex;gap:6px}
+  .checks li.ok{color:var(--green-d)} .checks li.no{color:var(--red)}
+  .btn{display:block;width:100%;margin-top:12px;padding:12px;border-radius:12px;border:0;font:inherit;font-size:15px;font-weight:800;cursor:pointer}
+  .btn.primary{background:var(--green-d);color:#fff}
+  .btn.primary:disabled{background:#c6cbb7;cursor:not-allowed}
+  .btn.ghost{background:#fff;border:1px solid var(--line);color:var(--mute)}
+  /* mobile bar */
+  .mbar{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);padding:10px 14px calc(10px + env(safe-area-inset-bottom));display:flex;gap:10px;align-items:center;z-index:5;box-shadow:0 -6px 18px rgba(0,0,0,.06)}
+  .mbar .t{flex:1;line-height:1.15}
+  .mbar .t b{font-size:20px;font-weight:900;display:block}
+  .mbar .t small{color:var(--mute);font-size:12.5px;font-weight:700}
+  .mbar .btn{width:auto;margin:0;padding:11px 18px}
+  @media(min-width:900px){.mbar{display:none}}
+  /* modal */
+  .modal{position:fixed;inset:0;background:rgba(30,32,25,.5);display:none;align-items:flex-end;justify-content:center;z-index:10}
+  .modal.open{display:flex}
+  @media(min-width:700px){.modal{align-items:center}}
+  .sheet{background:#fff;width:100%;max-width:620px;max-height:92vh;overflow:auto;border-radius:18px 18px 0 0;padding:18px}
+  @media(min-width:700px){.sheet{border-radius:18px}}
+  .sheet h3{margin:0 0 10px;font-weight:900}
+  pre.out{white-space:pre-wrap;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;background:#f6f6f0;border:1px solid var(--line);border-radius:12px;padding:14px;margin:0;line-height:1.5}
+  .btnrow{display:flex;gap:8px}
+  .btnrow .btn{flex:1}
+  .toast{position:fixed;left:50%;top:18px;transform:translateX(-50%) translateY(-80px);background:var(--ink);color:#fff;padding:9px 16px;border-radius:99px;font-weight:700;font-size:14px;transition:transform .25s;z-index:20}
+  .toast.show{transform:translateX(-50%) translateY(0)}
+  .tabs{display:flex;gap:6px;justify-content:center;margin:14px auto 0;max-width:520px;background:#eef0e6;padding:5px;border-radius:14px}
+  .tab{flex:1;border:0;background:transparent;font:inherit;font-weight:800;font-size:14px;padding:10px 8px;border-radius:10px;cursor:pointer;color:var(--mute);line-height:1.2}
+  .tab small{display:block;font-weight:700;font-size:12px;opacity:.8}
+  .tab.on{background:#fff;color:var(--green-d);box-shadow:0 1px 4px rgba(0,0,0,.08)}
+  .rule{font-size:13px;font-weight:700;padding:8px 11px;border-radius:10px;margin:0 0 10px;background:#f6f6f0;color:var(--mute)}
+  .rule.ok{background:var(--green-l);color:var(--green-d)}
+  .rule.bad{background:#fdecea;color:var(--red)}
+  .tab{font-size:13px;padding:9px 4px}
+  .pkg{border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin-bottom:10px;cursor:pointer;background:#fff}
+  .pkg.sel{border-color:var(--green);background:var(--green-l);box-shadow:0 0 0 1px var(--green) inset}
+  .pkg-h{display:flex;align-items:center;gap:10px}
+  .pkg-h .tick{border-radius:50%}
+  .pkg.sel .tick{background:var(--green-d);border-color:var(--green-d)}
+  .pkg.sel .tick::after{content:"";width:8px;height:8px;border-radius:50%;background:#fff}
+  .pkg-name{font-weight:900;font-size:16px;flex:1}
+  .pkg-price{font-weight:900;font-size:16px;color:var(--red);text-align:right;line-height:1.1}
+  .pkg-price small{display:block;font-size:11px;font-weight:700;color:var(--mute)}
+  .pkg ul{margin:8px 0 0 32px;padding:0;font-size:13.5px;color:var(--ink);columns:2;column-gap:18px}
+  .pkg li{margin:2px 0;break-inside:avoid}
+  @media(max-width:520px){.pkg ul{columns:1}}
+  .seg{display:flex;background:#eef0e6;padding:4px;border-radius:12px;gap:4px}
+  .seg button{flex:1;border:0;background:transparent;font:inherit;font-weight:800;font-size:14px;padding:9px;border-radius:9px;cursor:pointer;color:var(--mute)}
+  .seg button.on{background:#fff;color:var(--green-d);box-shadow:0 1px 4px rgba(0,0,0,.08)}
+  .dep{display:flex;align-items:center;gap:10px;margin-top:12px;padding:11px 12px;border:1px solid var(--line);border-radius:12px;cursor:pointer;user-select:none;font-weight:800;font-size:14.5px}
+  .dep.sel{background:var(--green-l);border-color:var(--green)}
+  .dep.sel .tick{background:var(--green-d);border-color:var(--green-d)}
+  .dep.sel .tick::after{content:"";width:6px;height:11px;border:solid #fff;border-width:0 2.5px 2.5px 0;transform:rotate(45deg) translate(-1px,-1px)}
+  .btn.cal{background:#fff;border:1.5px solid #4285f4;color:#1a62d6}
+  .btn.pdf{background:var(--red);color:#fff}
+  .footnote{font-size:12px;color:var(--mute);margin-top:10px}
+</style>
+</head>
+<body>
+<header>
+  <h1><span id="menuTitle">FINGER BUFFET</span> <span style="color:var(--red)">♥</span></h1>
+  <p id="menuSub">Dilly's Kitchen · £12.50 per head incl. VAT · plates, napkins &amp; tablecloth included</p>
+  <div class="tabs" role="tablist">
+    <button type="button" class="tab on" data-menu="finger">Finger Buffet<small>£12.50 pp</small></button>
+    <button type="button" class="tab" data-menu="hot">Hot &amp; Salad<small>£15.50 pp</small></button>
+    <button type="button" class="tab" data-menu="celeb">Celebrations<small>from £21 pp</small></button>
+  </div>
+</header>
+
+<div class="wrap">
+<main>
+  <section>
+    <h2>1. Order details</h2>
+    <p class="hint">Who it's for and when.</p>
+    <div class="fields">
+      <label class="f full">Customer name<input type="text" id="cName" autocomplete="name"></label>
+      <label class="f">Phone<input type="tel" id="cPhone" autocomplete="tel"></label>
+      <label class="f">Email<input type="email" id="cEmail" autocomplete="email"></label>
+      <label class="f">Date<input type="date" id="cDate"></label>
+      <label class="f">Time<input type="time" id="cTime"></label>
+      <div class="f full" style="gap:6px">Collection or delivery?
+        <div class="seg" id="fulfilSeg"><button type="button" data-fulfil="collect" class="on">Collection</button><button type="button" data-fulfil="deliver">Delivery</button></div>
+      </div>
+      <div class="full" id="delivFields" hidden>
+        <div class="fields">
+          <label class="f full">Delivery address<input type="text" id="cAddr" autocomplete="street-address" placeholder="House number and street"></label>
+          <label class="f">Town / city<input type="text" id="cTown" autocomplete="address-level2"></label>
+          <label class="f">Postcode<input type="text" id="cPost" autocomplete="postal-code" style="text-transform:uppercase"></label>
+          <label class="f full">Delivery instructions<input type="text" id="cDelNote" placeholder="e.g. side entrance, call on arrival"></label>
+        </div>
+      </div>
+      <label class="f full">Number of guests
+        <div class="stepper">
+          <button type="button" data-step="-1" aria-label="Fewer guests">−</button>
+          <input type="number" id="guests" min="1" value="20" inputmode="numeric">
+          <button type="button" data-step="1" aria-label="More guests">+</button>
+        </div>
+      </label>
+    </div>
+  </section>
+
+  <div id="fingerSecs">
+  <section>
+    <h2>2. Savoury <span class="badge" id="savBadge">0 / 6</span></h2>
+    <p class="hint">A selection of sandwiches is included. Then choose <b>six</b> savoury options. Need more? Each extra item is <b>+£1 per person</b>.</p>
+    <div class="included">🥪 Selection of sandwiches <b>INCLUDED</b></div>
+    <div class="filters" id="filters">
+      <button type="button" class="chip on" data-f="all">All</button>
+      <button type="button" class="chip" data-f="V">Vegetarian</button>
+      <button type="button" class="chip" data-f="VEGAN">Vegan</button>
+      <button type="button" class="chip" data-f="GF">Gluten free</button>
+    </div>
+    <div class="list" id="savList"></div>
+  </section>
+
+  <section>
+    <h2>3. Premium savoury add-ons</h2>
+    <p class="hint">Optional — <b>+£2 per person</b> each.</p>
+    <div class="list" id="premList"></div>
+  </section>
+
+  <section>
+    <h2>4. Dessert <span class="badge" id="desBadge">choose 1</span></h2>
+    <p class="hint">Every buffet comes with a <b>fresh fruit platter</b> plus one choice below.</p>
+    <div class="grp">Choose 1 included — each extra +£1 per person</div>
+    <div class="list" id="desList"></div>
+  </section>
+  <section>
+    <h2>5. Dessert add-ons</h2>
+    <p class="hint">Optional — add as many as you like, <b>+£2 per person</b> each.</p>
+    <div class="list" id="desPremList"></div>
+  </section>
+  </div>
+
+  <div id="hotSecs" hidden>
+  <section>
+    <h2>2. Main courses <span class="badge" id="mainBadge">0 / 3</span></h2>
+    <p class="hint">Choose <b>three</b>: one each from 1a, 1b and 1c, <b>or</b> three from 1b and 1c. Served with a hot side.</p>
+    <div class="rule" id="mainRule"></div>
+    <div class="filters" id="hotFilters">
+      <button type="button" class="chip on" data-hf="all">All</button>
+      <button type="button" class="chip" data-hf="V">Vegetarian</button>
+      <button type="button" class="chip" data-hf="VEGAN">Vegan</button>
+    </div>
+    <div id="mainLists"></div>
+  </section>
+  <section>
+    <h2>3. Hot side <span class="badge" id="sideBadge">choose 1</span></h2>
+    <div class="list" id="sideList"></div>
+  </section>
+  <section>
+    <h2>4. Salads <span class="badge" id="saladBadge">0 / 5</span></h2>
+    <p class="hint">Choose <b>five</b> salads.</p>
+    <div class="list" id="saladList"></div>
+  </section>
+  <section>
+    <h2>5. Dessert <span class="badge" id="hDesBadge">choose 1</span></h2>
+    <p class="hint">All desserts are homemade. Choose <b>one</b> — orders over 30 guests choose <b>two</b>.</p>
+    <div class="list" id="hDesList"></div>
+  </section>
+  </div>
+
+  <div id="celebSecs" hidden>
+  <section>
+    <h2>2. Choose a menu <span class="badge" id="pkgBadge">choose 1</span></h2>
+    <p class="hint">Set menus. Price per head drops for <b>25 or more</b> guests.</p>
+    <div id="pkgList"></div>
+  </section>
+  <section>
+    <h2>3. Desserts <span class="badge" id="cDesBadge">0 chosen</span></h2>
+    <p class="hint">Choose from the selection of desserts.</p>
+    <div class="list" id="cDesList"></div>
+  </section>
+  </div>
+
+  <section>
+    <h2><span id="extrasNum">6</span>. Extras &amp; notes</h2>
+    <div class="list" style="margin-bottom:12px">
+      <div class="item" id="crockery"><div class="tick"></div><div style="flex:1"><div class="name" id="crockName">Crockery instead of disposables</div></div><span class="price-tag" id="crockPrice">+£2 pp</span></div>
+    </div>
+    <label class="f">Dietary requirements / allergies<textarea id="diet" placeholder="e.g. 3 vegetarian, 1 coeliac"></textarea></label>
+    <label class="f" style="margin-top:10px">Other notes<textarea id="notes"></textarea></label>
+  </section>
+</main>
+
+<aside>
+  <div class="card" id="sumCard">
+    <h3>Order summary</h3>
+    <div id="sumRows"></div>
+    <div class="total"><span>Total</span><b id="total">£0.00</b></div>
+    <div class="pp" id="pp"></div>
+    <ul class="checks" id="checks"></ul>
+    <div class="dep" id="depBox"><div class="tick"></div><div style="flex:1">£50 deposit paid</div><b id="depAmt" style="color:var(--green-d)"></b></div>
+    <div id="balRow" class="row" hidden><span>Balance due</span><b id="balAmt"></b></div>
+    <button class="btn cal" id="calBtn" hidden>📅 Add booking to Google Calendar</button>
+    <button class="btn primary" id="reviewBtn">Review &amp; copy order</button>
+    <button class="btn pdf" id="pdfBtn">Customer copy (PDF)</button>
+    <button class="btn ghost" id="resetBtn">Start a new order</button>
+    <p class="footnote">Other options available — call to discuss.</p>
+  </div>
+</aside>
+</div>
+
+<div class="mbar">
+  <div class="t"><b id="mTotal">£0.00</b><small id="mInfo"></small></div>
+  <button class="btn primary" id="mReview">Review</button>
+</div>
+
+<div class="modal" id="modal" role="dialog" aria-modal="true">
+  <div class="sheet">
+    <h3>Order</h3>
+    <pre class="out" id="out"></pre>
+    <div class="btnrow">
+      <button class="btn primary" id="copyBtn">Copy order</button>
+      <button class="btn pdf" id="pdfBtn2">PDF</button>
+      <button class="btn ghost" id="closeBtn">Close</button>
+    </div>
+  </div>
+</div>
+<div class="modal" id="confirmModal" role="dialog" aria-modal="true">
+  <div class="sheet">
+    <h3>Start a new order?</h3>
+    <p class="hint">This clears everything on the current order.</p>
+    <div class="btnrow">
+      <button class="btn primary" id="confirmYes" style="background:var(--red)">Clear order</button>
+      <button class="btn ghost" id="confirmNo">Cancel</button>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script src="pdf-lib.min.js"></script>
+<script>
+const BASE = 12.50, UP = 2, EXTRA = 1, NEED = 6;
+const SAVOURY = [
+  ["Chicken drumsticks", ["GF"], {opt:"Style", choices:["Plain","Marinated"]}],
+  ["Pork and leek sausage rolls", []],
+  ["Pork and apple sausage rolls", []],
+  ["Sausage rolls", []],
+  ["Corned beef pasties", []],
+  ["Vegetable pasties", ["V"]],
+  ["Cheese and onion pasties", ["V"]],
+  ["Spicy meatballs with yoghurt", ["GF"]],
+  ["Ciabatta topped with spinach and goat's cheese", ["V"]],
+  ["Ciabatta topped with roasted peppers and goat's cheese", ["V"]],
+  ["French bread pizza", ["V"]],
+  ["Asparagus puffs", ["V"]],
+  ["Mushroom and leek puff pastry swirls", ["V","VEGAN"]],
+  ["Cheese and bacon puffs", []],
+  ["Mini quiche", ["V"]],
+  ["Brie and cranberry puffs", ["V"]],
+  ["Cheesy chorizo rolls", ["GF"]],
+  ["Tortilla wraps with houmous, rocket and roasted peppers", ["V","VEGAN"]],
+  ["Tortilla wraps with cream cheese and roasted peppers", ["V"]],
+  ["Stuffed tomatoes", ["V","VEGAN","GF"]],
+  ["Stuffed new potatoes", ["V","VEGAN","GF"]],
+  ["Ploughman's platter", []],
+  ["Vegetable crudités and dips", ["V","VEGAN","GF"]],
+  ["Houmous, pitta bread and olives", ["V","VEGAN"]],
+  ["Indian selection platter (not homemade)", ["V","VEGAN","GF"]],
+  ["Butternut squash and feta tartlets", ["V"]],
+  ["Tomato, basil and mozzarella skewers with a balsamic glaze", ["V","GF"]],
+  ["Sunblushed tomato, cream cheese and pesto crostini", ["V"]],
+  ["Spanish-style chicken skewers with spiced yoghurt dip", []],
+  ["Watermelon, feta and mint skewer", ["V","GF"]],
+];
+const PREMIUM = [
+  ["Homemade scotch eggs"],
+  ["Chicken goujons with salsa dip"],
+  ["Smoked salmon blinis"],
+  ["Canapés (mini bite-sized pies)", {opt:"Flavours", multi:true, choices:["Steak and onion","Steak and ale","Chicken, bacon and stilton","Garlic chilli chicken","Broccoli and stilton","Aloo gobi","Butternut squash, feta and caramelised onion","Lamb and mint"]}],
+  ["Mini Yorkshire puddings with sliced beef, horseradish mayo and rocket"],
+  ["Smoked salmon and cucumber bites with lemon dill cream cheese"],
+];
+const DESSERT = [["Victoria sponge fingers"],["Scones with jam and cream"],["Chocolate sponge fingers"],["Coffee cake"],["Carrot cake"],["Lemon cake"],["Flapjack",{opt:"Version",choices:["Standard","Vegan"]}]];
+const DESSERT_PREM = [["Mini eclairs"],["Mini fruit tartlets"],["Chocolate brownies"]];
+
+// ---- Hot food with salad menu ----
+const HOT_BASE = 15.50, HOT_CROCK = 3, HOT_MAINS = 3, HOT_SALADS = 5;
+const PAELLA = "Paella";
+const HOT_A = [
+  ["Chicken", ["Chicken tagine","Creamy chicken casserole with carrots, leeks and whole grain mustard sauce","Coq au vin","Spanish chicken","Chicken cacciatore","Thai green chicken curry","Sweet and sour chicken","Chicken teriyaki","Classic chicken casserole","Chicken Stroganoff","Chicken, bacon and stilton pie","Chicken and leek pie","Garlic and chilli chicken pie"]],
+  ["Beef", ["Beef stifado","Beef Stroganoff","Beef ragu","Chimichurri beef casserole","Italian baked meatballs","Beef koftas with pitta bread","Beef bourguignon","Chilli con carne","Traditional steak and ale casserole","Steak and onion pie","Beef goulash","Meatballs in a coconut curry sauce","Beef teriyaki"]],
+  ["Lamb", ["Lamb moussaka","Lamb tagine","Lamb Rogan Josh"]],
+  ["Pork", ["Chinese barbecue belly pork","Dijon pork with mushrooms","Pork Stroganoff","Pork in an apple and cider sauce","Sweet and sour pork"]],
+  ["Fish", ["Three fish pie with salmon, haddock and cod"]],
+];
+const V=["V"], VE=["V","VEGAN"];
+const HOT_B = [
+  ["Chicken and chorizo lasagne",[]],
+  [PAELLA,[],{opt:"Type",choices:["Chicken and chorizo","Vegetable (vegan)"]}],
+  ["Cheese, leek and potato bake",V],
+  ["Butternut squash and spinach lasagne",V],
+  ["Spinach and mushroom lasagne",V],
+  ["Sweet potato and chickpea coconut curry",V],
+  ["Aubergine parmigiana",V],
+  ["Butternut squash, sweet potato and chickpea tagine",VE],
+  ["Cauliflower, spinach and potato curry",VE],
+  ["Vegetable chow mein stir fry",VE],
+  ["Mediterranean vegetable pasta bake",VE],
+  ["Asparagus and pea risotto",VE],
+  ["Butternut squash and spinach risotto",VE],
+];
+const HOT_C = [
+  ["Mediterranean vegetable quiche",V],
+  ["Caramelised red onion and goats cheese quiche",V],
+  ["Asparagus quiche",V],
+  ["Leek and mushroom quiche",V],
+  ["Broccoli and stilton quiche",V],
+  ["Stuffed peppers",VE],
+  ["Stuffed tomatoes",VE],
+  ["Stuffed mushrooms",VE],
+  ["Stuffed courgette",VE],
+  ["Broccoli, mushroom and stilton pie",V],
+];
+const HOT_SIDES = ["Basmati rice","New potatoes","Mash potato","Noodles"];
+const SALADS = ["Coleslaw","Beetroot and apple with balsamic reduction","Sweetcorn, mixed peppers and red onions","Carrot and courgette","Mediterranean vegetable cous cous","Moroccan cous cous","Pesto, rocket and sundried tomato pasta","Mixed bean and lentil salad","Italian salad","Fruity Florida coleslaw","Curried rice salad","Waldorf salad","Fennel and radish salad","New potato salad","Greek salad","Herby leaf salad","Tomato and mozzarella salad","Red cabbage slaw","Superfood salad","Cobb salad (contains bacon)","Watermelon, feta and mint salad","Tabbouleh","Mediterranean chickpea salad"];
+const HOT_DESSERTS = ["Raspberry and white chocolate cheesecake","Chocolate brownie and salted caramel cheesecake","Mixed berry cheesecake","Chocolate fudge cake","Lemon meringue pie","Fresh fruit pavlova","Apple crumble","Banoffee pie","Fruit crumble","Profiteroles","Bread and butter pudding","Summer fruit trifle","Chocolate trifle","Chocolate gateaux","Chocolate brownies and clotted cream","Victoria sponge cake","Cheese and biscuits"];
+const mainSection = n => HOT_A.some(g=>g[1].includes(n)) ? "a" : HOT_B.some(x=>x[0]===n) ? "b" : "c";
+const hotBlank = () => ({mains:{}, side:null, salads:{}, des:{}, crockery:false, filter:"all"});
+
+// ---- Celebrations menu ----
+const CELEB_CROCK = 3, CELEB_BREAK = 25;
+const CELEB = [
+  {id:"bronze", name:"Bronze", full:"Celebration menu 1 (Bronze)", big:21, small:22, items:["Slow cooked roast beef, stuffed with garlic","Whole roast turkey served with homemade stuffing","Homemade asparagus quiche","Rice salad","New potatoes with dill and lemon","Italian tomato and herb pasta","Coleslaw","Mixed green salad","Greek salad"]},
+  {id:"silver", name:"Silver", full:"Celebration menu 2 (Silver)", big:23, small:24, items:["Fresh seafood platter","Glazed honey roast ham","Selection of vegetarian quiches","Cheese coleslaw","Mixed green salad","Fennel and radish salad","Mixed bean and lentil salad","Greek salad","New potato salad","French bread"]},
+  {id:"gold", name:"Gold", full:"Celebration menu 3 (Gold)", big:28, small:29, items:["Dressed fresh salmon served with prawns, smoked salmon and a leek and stilton sauce","Whole roast turkey with apricot and brandy stuffing","Honey and mustard glazed ham","Selection of homemade quiches","Cucumber and soured cream salad","Mixed bean salad","Waldorf salad","Curried rice salad","Garlic mushroom pasta","Mixed platter salad","Hot minted new potatoes"]},
+];
+const celebBlank = () => ({pkg:null, des:{}, crockery:false});
+const blank = () => ({menu:"finger", sav:{}, prem:{}, dessert:null, dessertOpt:{}, desPrem:{}, des:{}, crockery:false, filter:"all", hot:hotBlank(), celeb:celebBlank(), fulfil:"collect", deposit:false});
+let S = blank();
+const $ = id => document.getElementById(id);
+const esc = s => s.replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const money = n => "£" + n.toFixed(2);
+
+function tagsHtml(t){ return t && t.length ? `<span class="tags">${t.map(x=>`<span class="tag">${x}</span>`).join("")}</span>` : ""; }
+function subHtml(key, sub, cur){
+  if(!sub) return "";
+  const vals = sub.multi ? (cur||[]) : [cur || sub.choices[0]];
+  return `<div class="sub">${sub.multi?`<div class="sub-label">${sub.opt} — pick any:</div>`:""}${sub.choices.map(c=>`<button type="button" class="chip ${vals.includes(c)?"on":""}" data-sub="${esc(key)}" data-val="${esc(c)}">${esc(c)}</button>`).join("")}</div>`;
+}
+
+function itemHtml(kind,key,name,{tags=[],sel=false,dis=false,hide=false,price="",sub="",radio=false}={}){
+  return `<div class="item ${sel?"sel":""} ${dis?"dis":""} ${hide?"hide":""} ${radio?"rad":""}" data-kind="${kind}" data-key="${esc(key)}"><div class="tick" ${radio?'style="border-radius:50%"':""}></div><div style="flex:1"><div class="name">${esc(name)}${tagsHtml(tags)}</div>${sub}</div>${price}</div>`;
+}
+function badge(id, text, state){ const b=$(id); b.textContent=text; b.className="badge"+(state?" "+state:""); }
+function hotDessertNeed(){ return (parseInt($("guests").value)||0) > 30 ? 2 : 1; }
+function hotMainState(){
+  const k = Object.keys(S.hot.mains), cnt = {a:0,b:0,c:0};
+  k.forEach(n=>cnt[mainSection(n)]++);
+  let ok=false, msg;
+  if(k.length===0) msg = "Pick 1 from 1a, 1b and 1c — or 3 from 1b and 1c";
+  else if(cnt.a>0){
+    ok = cnt.a===1 && cnt.b===1 && cnt.c===1;
+    msg = ok ? "✓ One from each of 1a, 1b and 1c" :
+      (cnt.b>1||cnt.c>1) ? "With a 1a main you need exactly one from 1b and one from 1c" :
+      `Still need: ${[cnt.b?null:"1 from 1b", cnt.c?null:"1 from 1c"].filter(Boolean).join(" and ")}`;
+  } else {
+    ok = k.length===HOT_MAINS;
+    msg = ok ? "✓ Three from 1b and 1c" : `Choose ${HOT_MAINS-k.length} more from 1b/1c (or swap one for a 1a main)`;
+  }
+  return {k, cnt, ok, msg};
+}
+function renderHot(){
+  const H = S.hot, st = hotMainState(), full = st.k.length>=HOT_MAINS;
+  const hideF = t => H.filter!=="all" && !t.includes(H.filter);
+  const aTaken = st.cnt.a>0;
+  const mItem = (n,t=[],sub) => { const sel = n in H.mains;
+    return itemHtml("main", n, n, {tags:t, sel, dis: !sel && (full || (aTaken && mainSection(n)==="a")), hide: hideF(t), sub: sel&&sub ? subHtml(n,sub,H.mains[n]) : ""}); };
+  let html = `<div class="grp">Option 1a — meat &amp; fish (max 1)</div>`;
+  if(H.filter==="all") HOT_A.forEach(([g,items])=>{ html += `<div class="grp" style="font-weight:700;color:var(--mute);margin-top:8px">${g}</div><div class="list">${items.map(n=>mItem(n)).join("")}</div>`; });
+  else html += `<p class="hint">No vegetarian options in 1a.</p>`;
+  html += `<div class="grp" style="margin-top:16px">Option 1b</div><div class="list">${HOT_B.map(([n,t,sub])=>mItem(n,t,sub)).join("")}</div>`;
+  html += `<div class="grp" style="margin-top:16px">Option 1c</div><div class="list">${HOT_C.map(([n,t])=>mItem(n,t)).join("")}</div>`;
+  $("mainLists").innerHTML = html;
+  const r=$("mainRule"); r.textContent = st.msg; r.className = "rule" + (st.ok?" ok": (st.k.length && !st.ok && (st.cnt.b>1||st.cnt.c>1) && st.cnt.a) ? " bad":"");
+  badge("mainBadge", `${st.k.length} / ${HOT_MAINS}`, st.ok?"done":"");
+  document.querySelectorAll("#hotFilters .chip").forEach(c=>c.classList.toggle("on", c.dataset.hf===H.filter));
+
+  $("sideList").innerHTML = HOT_SIDES.map(n=>itemHtml("side",n,n,{sel:H.side===n, radio:true})).join("");
+  badge("sideBadge", H.side ? "chosen" : "choose 1", H.side?"done":"");
+
+  const sc = Object.keys(H.salads).length;
+  $("saladList").innerHTML = SALADS.map(n=>{ const sel = n in H.salads; return itemHtml("salad",n,n,{sel, dis: !sel && sc>=HOT_SALADS}); }).join("");
+  badge("saladBadge", `${sc} / ${HOT_SALADS}`, sc===HOT_SALADS?"done":"");
+
+  const need = hotDessertNeed(), dc = Object.keys(H.des).length;
+  $("hDesList").innerHTML = HOT_DESSERTS.map(n=>{ const sel = n in H.des; return itemHtml("hdes",n,n,{sel, dis: !sel && dc>=need}); }).join("");
+  badge("hDesBadge", `${dc} / ${need}`, dc===need?"done": dc>need?"over":"");
+}
+function guestsN(){ return Math.max(0, parseInt($("guests").value)||0); }
+function celebPP(pk){ return guestsN()>=CELEB_BREAK ? pk.big : pk.small; }
+function renderCeleb(){
+  const C = S.celeb, g = guestsN();
+  $("pkgList").innerHTML = CELEB.map(pk=>`<div class="pkg ${C.pkg===pk.id?"sel":""}" data-pkg="${pk.id}">
+    <div class="pkg-h"><div class="tick"></div><div class="pkg-name">${pk.name}</div>
+    <div class="pkg-price">${money(celebPP(pk))}<small>pp · ${g>=CELEB_BREAK?"25+ guests":"under 25"}</small></div></div>
+    <ul>${pk.items.map(i=>`<li>${esc(i)}</li>`).join("")}</ul></div>`).join("");
+  badge("pkgBadge", C.pkg ? CELEB.find(p=>p.id===C.pkg).name : "choose 1", C.pkg?"done":"");
+  const dc = Object.keys(C.des).length;
+  $("cDesList").innerHTML = HOT_DESSERTS.map(n=>itemHtml("cdes",n,n,{sel: n in C.des})).join("");
+  badge("cDesBadge", `${dc} chosen`, dc?"done":"");
+}
+function crockOn(){ return S.menu==="hot" ? S.hot.crockery : S.menu==="celeb" ? S.celeb.crockery : S.crockery; }
+function renderMenu(){
+  const hot = S.menu==="hot", cel = S.menu==="celeb";
+  $("fingerSecs").hidden = hot||cel; $("hotSecs").hidden = !hot; $("celebSecs").hidden = !cel;
+  document.querySelectorAll(".tab").forEach(t=>t.classList.toggle("on", t.dataset.menu===S.menu));
+  $("menuTitle").textContent = hot ? "HOT FOOD WITH SALAD" : cel ? "CELEBRATIONS MENU" : "FINGER BUFFET";
+  $("menuSub").textContent = hot ? "Dilly's Kitchen · £15.50 per head incl. VAT · plates, napkins, cutlery & tablecloth included"
+    : cel ? "Dilly's Kitchen · set menus from £21 per head · plates, napkins, cutlery & tablecloth included"
+    : "Dilly's Kitchen · £12.50 per head incl. VAT · plates, napkins & tablecloth included";
+  $("extrasNum").textContent = cel ? "4" : "6";
+  $("crockName").textContent = (hot||cel) ? "Crockery and cutlery instead of disposables" : "Crockery instead of disposables";
+  $("crockPrice").textContent = (hot||cel) ? "+£3 pp" : "+£2 pp";
+  $("crockery").classList.toggle("sel", crockOn());
+  document.title = hot ? "Dilly's Kitchen – Hot Food & Salad Order" : cel ? "Dilly's Kitchen – Celebrations Order" : "Dilly's Kitchen – Finger Buffet Order";
+}
+
+function render(){
+  renderMenu();
+  if(S.menu==="hot"){ renderHot(); summary(); save(); return; }
+  if(S.menu==="celeb"){ renderCeleb(); summary(); save(); return; }
+  // savoury
+  const count = Object.keys(S.sav).length;
+  $("savList").innerHTML = SAVOURY.map(([n,t,sub])=>{
+    const sel = n in S.sav, isExtra = !sel && count>=NEED;
+    const hide = S.filter!=="all" && !t.includes(S.filter);
+    return `<div class="item ${sel?"sel":""} ${hide?"hide":""}" data-kind="sav" data-key="${esc(n)}"><div class="tick"></div><div style="flex:1"><div class="name">${esc(n)}${tagsHtml(t)}</div>${sel?subHtml(n,sub,S.sav[n]):""}</div>${isExtra?'<span class="price-tag">+£1 pp</span>':""}</div>`;
+  }).join("");
+  const b = $("savBadge"); b.textContent = count>NEED ? `6 + ${count-NEED} extra` : `${count} / ${NEED}`; b.className = "badge" + (count>=NEED?" done":"");
+  document.querySelectorAll("#filters .chip").forEach(c=>c.classList.toggle("on", c.dataset.f===S.filter));
+
+  $("premList").innerHTML = PREMIUM.map(([n,sub])=>{
+    const sel = n in S.prem;
+    return `<div class="item ${sel?"sel":""}" data-kind="prem" data-key="${esc(n)}"><div class="tick"></div><div style="flex:1"><div class="name">${esc(n)}</div>${sel?subHtml(n,sub,S.prem[n]):""}</div><span class="price-tag">+£2 pp</span></div>`;
+  }).join("");
+
+  const dCount = Object.keys(S.des).length;
+  $("desList").innerHTML = DESSERT.map(([n,sub])=>{
+    const sel = n in S.des, isExtra = !sel && dCount>=1;
+    return `<div class="item ${sel?"sel":""}" data-kind="des" data-key="${esc(n)}"><div class="tick"></div><div style="flex:1"><div class="name">${esc(n)}</div>${sel?subHtml(n,sub,S.des[n]):""}</div>${isExtra?'<span class="price-tag">+£1 pp</span>':""}</div>`;
+  }).join("");
+  $("desPremList").innerHTML = DESSERT_PREM.map(([n])=>{ const sel = n in S.desPrem;
+    return `<div class="item ${sel?"sel":""}" data-kind="desprem" data-key="${esc(n)}"><div class="tick"></div><div style="flex:1"><div class="name">${esc(n)}</div></div><span class="price-tag">+£2 pp</span></div>`; }).join("");
+  const db = $("desBadge"); db.textContent = dCount>1 ? `1 + ${dCount-1} extra` : dCount ? "chosen" : "choose 1"; db.className = "badge" + (dCount?" done":"");
+
+  summary();
+  save();
+}
+
+function calcHot(){
+  const g = Math.max(0, parseInt($("guests").value)||0);
+  const pp = HOT_BASE + (S.hot.crockery?HOT_CROCK:0);
+  return {g, pp, total: pp*g};
+}
+function calcCeleb(){
+  const g = guestsN(), pk = CELEB.find(p=>p.id===S.celeb.pkg);
+  const base = pk ? celebPP(pk) : 0;
+  const pp = base + (S.celeb.crockery?CELEB_CROCK:0);
+  return {g, pk, base, pp, total: pp*g};
+}
+function calc(){
+  if(S.menu==="hot") return calcHot();
+  if(S.menu==="celeb") return calcCeleb();
+  const g = Math.max(0, parseInt($("guests").value)||0);
+  const premN = Object.keys(S.prem).length;
+  const extraN = Math.max(0, Object.keys(S.sav).length - NEED);
+  const desPremN = Object.keys(S.desPrem).length;
+  const desExtraN = Math.max(0, Object.keys(S.des).length - 1);
+  const pp = BASE + extraN*EXTRA + desExtraN*EXTRA + premN*UP + desPremN*UP + (S.crockery?UP:0);
+  return {g, premN, extraN, desPremN, desExtraN, pp, total: pp*g};
+}
+
+function problems(){
+  const p = [], c = calc();
+  const n = Object.keys(S.sav).length;
+  if(!$("cName").value.trim()) p.push(["Add customer name", false]);
+  if(!$("cDate").value) p.push(["Add event date", false]);
+  if(c.g<1) p.push(["Add number of guests", false]);
+  if(S.menu==="celeb"){
+    p.push([c.pk ? `${c.pk.name} menu chosen` : "Choose Bronze, Silver or Gold", !!c.pk]);
+    const dc = Object.keys(S.celeb.des).length;
+    p.push([dc ? `${dc} dessert${dc>1?"s":""} chosen` : "Choose desserts", dc>0]);
+    return p;
+  }
+  if(S.menu==="hot"){
+    const st = hotMainState(), H = S.hot;
+    p.push([st.ok ? "3 main courses chosen" : "Mains: "+st.msg, st.ok]);
+    p.push([H.side ? "Hot side chosen" : "Choose a hot side", !!H.side]);
+    const sc = Object.keys(H.salads).length;
+    p.push([sc===HOT_SALADS ? "5 salads chosen" : `Choose ${HOT_SALADS-sc} more salad${HOT_SALADS-sc===1?"":"s"}`, sc===HOT_SALADS]);
+    const need = hotDessertNeed(), dc = Object.keys(H.des).length;
+    p.push([dc===need ? `${need===2?"2 desserts":"Dessert"} chosen` : dc>need ? `Only ${need} dessert for ${c.g} guests — untick ${dc-need}` : `Choose ${need-dc} more dessert${need-dc===1?"":"s"}${need===2?" (over 30 guests)":""}`, dc===need]);
+    return p;
+  }
+  p.push([n>=NEED ? (n>NEED ? `6 savoury + ${n-NEED} extra` : "6 savoury options chosen") : `Choose ${NEED-n} more savoury option${NEED-n===1?"":"s"}`, n>=NEED]);
+  if("Canapés (mini bite-sized pies)" in S.prem && !(S.prem["Canapés (mini bite-sized pies)"]||[]).length) p.push(["Pick canapé flavours", false]);
+  const dn = Object.keys(S.des).length;
+  p.push([dn>1 ? `Dessert + ${dn-1} extra` : dn ? "Dessert chosen" : "Choose a dessert", dn>0]);
+  return p;
+}
+
+function summary(){ summaryCore(); depositUI(); }
+function depositUI(){
+  const c = calc();
+  $("depBox").classList.toggle("sel", S.deposit);
+  $("depAmt").textContent = S.deposit ? "−"+money(DEPOSIT) : "";
+  $("balRow").hidden = !S.deposit; $("balAmt").textContent = money(Math.max(0,c.total-DEPOSIT));
+  $("calBtn").hidden = !S.deposit;
+  document.querySelectorAll("[data-fulfil]").forEach(b=>b.classList.toggle("on", b.dataset.fulfil===S.fulfil));
+  $("delivFields").hidden = S.fulfil!=="deliver";
+}
+function summaryCore(){
+  const c = calc();
+  if(S.menu==="celeb"){
+    let rows = `<div class="row"><span>Guests</span><b>${c.g}</b></div>`;
+    rows += c.pk ? `<div class="row"><span>${c.pk.name} @ ${money(c.base)}</span><b>${money(c.base*c.g)}</b></div>`
+                 : `<div class="row"><span>Menu</span><b>not chosen</b></div>`;
+    if(S.celeb.crockery) rows += `<div class="row"><span>Crockery &amp; cutlery @ £3</span><b>${money(CELEB_CROCK*c.g)}</b></div>`;
+    $("sumRows").innerHTML = rows;
+    $("total").textContent = money(c.total);
+    $("pp").textContent = c.pk ? `${money(c.pp)} per person${c.g>=CELEB_BREAK?" (25+ rate)":" (under-25 rate)"}` : "Choose a menu to see the price";
+    $("checks").innerHTML = problems().map(([t,ok])=>`<li class="${ok?"ok":"no"}">${ok?"✓":"•"} ${esc(t)}</li>`).join("");
+    $("mTotal").textContent = money(c.total);
+    $("mInfo").textContent = `${c.g} guests · ${c.pk?c.pk.name:"no menu"} · ${Object.keys(S.celeb.des).length} desserts`;
+    return;
+  }
+  if(S.menu==="hot"){
+    let rows = `<div class="row"><span>Guests</span><b>${c.g}</b></div>
+      <div class="row"><span>Hot food &amp; salad @ ${money(HOT_BASE)}</span><b>${money(HOT_BASE*c.g)}</b></div>`;
+    if(S.hot.crockery) rows += `<div class="row"><span>Crockery &amp; cutlery @ £3</span><b>${money(HOT_CROCK*c.g)}</b></div>`;
+    $("sumRows").innerHTML = rows;
+    $("total").textContent = money(c.total);
+    $("pp").textContent = `${money(c.pp)} per person · incl. VAT`;
+    $("checks").innerHTML = problems().map(([t,ok])=>`<li class="${ok?"ok":"no"}">${ok?"✓":"•"} ${esc(t)}</li>`).join("");
+    $("mTotal").textContent = money(c.total);
+    const H=S.hot;
+    $("mInfo").textContent = `${c.g} guests · ${Object.keys(H.mains).length}/3 mains · ${Object.keys(H.salads).length}/5 salads`;
+    return;
+  }
+  let rows = `<div class="row"><span>Guests</span><b>${c.g}</b></div>
+    <div class="row"><span>Buffet @ ${money(BASE)}</span><b>${money(BASE*c.g)}</b></div>`;
+  if(c.extraN) rows += `<div class="row"><span>${c.extraN} extra savour${c.extraN>1?"ies":"y"} @ £1</span><b>${money(c.extraN*EXTRA*c.g)}</b></div>`;
+  if(c.premN) rows += `<div class="row"><span>${c.premN} premium add-on${c.premN>1?"s":""} @ £2</span><b>${money(c.premN*UP*c.g)}</b></div>`;
+  if(c.desExtraN) rows += `<div class="row"><span>${c.desExtraN} extra dessert${c.desExtraN>1?"s":""} @ £1</span><b>${money(c.desExtraN*EXTRA*c.g)}</b></div>`;
+  if(c.desPremN) rows += `<div class="row"><span>${c.desPremN} dessert add-on${c.desPremN>1?"s":""} @ £2</span><b>${money(c.desPremN*UP*c.g)}</b></div>`;
+  if(S.crockery) rows += `<div class="row"><span>Crockery @ £2</span><b>${money(UP*c.g)}</b></div>`;
+  $("sumRows").innerHTML = rows;
+  $("total").textContent = money(c.total);
+  $("pp").textContent = `${money(c.pp)} per person · incl. VAT`;
+  const pr = problems();
+  $("checks").innerHTML = pr.map(([t,ok])=>`<li class="${ok?"ok":"no"}">${ok?"✓":"•"} ${esc(t)}</li>`).join("");
+  $("mTotal").textContent = money(c.total);
+  const n = Object.keys(S.sav).length;
+  $("mInfo").textContent = `${c.g} guests · ${n>NEED?"6+"+(n-NEED):n+"/6"} savoury · ${Object.keys(S.des).length?"dessert ✓":"no dessert"}`;
+}
+
+function orderText(){
+  let t = orderTextCore();
+  if(S.deposit){
+    const bal = Math.max(0, calc().total - DEPOSIT);
+    t = t.replace(/(  TOTAL: [^\n]*)/, `$1\n  Deposit paid: £${DEPOSIT.toFixed(2)}\n  BALANCE DUE: ${money(bal)}`);
+  } else t = t.replace(/(  TOTAL: [^\n]*)/, `$1\n  Deposit: not yet paid`);
+  return t;
+}
+function orderTextCore(){
+  const c = calc(), v = id => $(id).value.trim();
+  const fmtDate = d => { try{ return new Date(d+"T12:00").toLocaleDateString("en-GB",{weekday:"short",day:"numeric",month:"short",year:"numeric"}); }catch(e){ return d; } };
+  const L = [];
+  L.push(S.menu==="hot" ? "DILLY'S KITCHEN – HOT FOOD WITH SALAD BUFFET ORDER" : S.menu==="celeb" ? "DILLY'S KITCHEN – CELEBRATIONS MENU ORDER" : "DILLY'S KITCHEN – FINGER BUFFET ORDER","");
+  L.push(`Customer: ${v("cName")||"—"}`);
+  if(v("cPhone")) L.push(`Phone: ${v("cPhone")}`);
+  if(v("cEmail")) L.push(`Email: ${v("cEmail")}`);
+  L.push(`Date: ${v("cDate")?fmtDate(v("cDate")):"—"}${v("cTime")?" at "+v("cTime"):""}`);
+  L.push(S.fulfil==="deliver" ? `Deliver to: ${addrText()||"(address not given)"}${v("cDelNote")?" — "+v("cDelNote"):""}` : "Collection");
+  L.push(`Guests: ${c.g}`,"");
+  if(S.menu==="hot") return hotOrderText(L, c, v);
+  if(S.menu==="celeb") return celebOrderText(L, c, v);
+  L.push("SAVOURY","  • Selection of sandwiches");
+  const line = ([n,t,sub]) => `  • ${n}${sub?` (${S.sav[n]||sub.choices[0]})`:""}${t.length?" ["+t.join(", ")+"]":""}`;
+  const chosen = Object.keys(S.sav).map(k=>SAVOURY.find(x=>x[0]===k));
+  chosen.slice(0,NEED).forEach(x=>L.push(line(x)));
+  if(chosen.length>NEED){ L.push("","EXTRA SAVOURY (+£1 pp each)"); chosen.slice(NEED).forEach(x=>L.push(line(x))); }
+  if(c.premN){
+    L.push("","PREMIUM ADD-ONS (+£2 pp each)");
+    PREMIUM.forEach(([n,sub])=>{ if(n in S.prem){ L.push(`  • ${n}${sub&&S.prem[n]?.length?": "+S.prem[n].join(", "):""}`);} });
+  }
+  L.push("","DESSERT","  • Fresh fruit platter");
+  const dLine = k => { const sub = DESSERT.find(d=>d[0]===k)[1]; return `  • ${k}${sub?` (${S.des[k]||sub.choices[0]})`:""}`; };
+  const dk = Object.keys(S.des);
+  if(dk.length){ L.push(dLine(dk[0])); if(dk.length>1){ L.push("","EXTRA DESSERTS (+£1 pp each)"); dk.slice(1).forEach(k=>L.push(dLine(k))); } }
+  else L.push("  • (not chosen)");
+  if(c.desPremN){ L.push("","DESSERT ADD-ONS (+£2 pp each)"); DESSERT_PREM.forEach(([n])=>{ if(n in S.desPrem) L.push(`  • ${n}`); }); }
+  L.push("", S.crockery ? "Crockery (+£2 pp)" : "Disposable plates, napkins & tablecloth");
+  if(v("diet")) L.push("","Dietary / allergies: "+v("diet"));
+  if(v("notes")) L.push("","Notes: "+v("notes"));
+  L.push("","PRICE");
+  L.push(`  ${money(c.pp)} per person × ${c.g} guests`);
+  L.push(`  TOTAL: ${money(c.total)} (incl. VAT)`);
+  const miss = problems().filter(p=>!p[1]);
+  if(miss.length){ L.push("","⚠ Still to confirm: "+miss.map(p=>p[0]).join("; ")); }
+  return L.join("\n");
+}
+
+function celebOrderText(L, c, v){
+  const C = S.celeb;
+  L.push(c.pk ? c.pk.full.toUpperCase() : "MENU: (not chosen)");
+  if(c.pk) c.pk.items.forEach(i=>L.push("  • "+i));
+  L.push("","DESSERTS"); const dk=Object.keys(C.des); (dk.length?dk:["(not chosen)"]).forEach(n=>L.push("  • "+n));
+  L.push("", C.crockery ? "Crockery & cutlery (+£3 pp)" : "Disposable plates, napkins, cutlery & tablecloth");
+  if(v("diet")) L.push("","Dietary / allergies: "+v("diet"));
+  if(v("notes")) L.push("","Notes: "+v("notes"));
+  L.push("","PRICE");
+  if(c.pk) L.push(`  ${money(c.pp)} per person × ${c.g} guests${c.g>=CELEB_BREAK?" (25+ rate)":" (under-25 rate)"}`);
+  L.push(`  TOTAL: ${money(c.total)}`);
+  const miss = problems().filter(p=>!p[1]);
+  if(miss.length) L.push("","⚠ Still to confirm: "+miss.map(p=>p[0]).join("; "));
+  return L.join("\n");
+}
+function hotOrderText(L, c, v){
+  const H = S.hot, tagOf = n => { const x = HOT_B.concat(HOT_C).find(y=>y[0]===n); return x && x[1].length ? " ["+x[1].join(", ")+"]" : ""; };
+  L.push("MAIN COURSES");
+  const order = {a:0,b:1,c:2};
+  Object.keys(H.mains).sort((x,y)=>order[mainSection(x)]-order[mainSection(y)]).forEach(n=>{
+    const opt = n===PAELLA ? ` – ${H.mains[n]||"Chicken and chorizo"}` : "";
+    L.push(`  • ${n}${opt}${tagOf(n)}  — 1${mainSection(n)}`);
+  });
+  if(!Object.keys(H.mains).length) L.push("  • (not chosen)");
+  L.push("","HOT SIDE", `  • ${H.side||"(not chosen)"}`);
+  L.push("","SALADS"); const sk=Object.keys(H.salads); (sk.length?sk:["(not chosen)"]).forEach(n=>L.push("  • "+n));
+  L.push("","DESSERT"); const dk=Object.keys(H.des); (dk.length?dk:["(not chosen)"]).forEach(n=>L.push("  • "+n));
+  L.push("", H.crockery ? "Crockery & cutlery (+£3 pp)" : "Disposable plates, napkins, cutlery & tablecloth");
+  if(v("diet")) L.push("","Dietary / allergies: "+v("diet"));
+  if(v("notes")) L.push("","Notes: "+v("notes"));
+  L.push("","PRICE", `  ${money(c.pp)} per person × ${c.g} guests`, `  TOTAL: ${money(c.total)} (incl. VAT)`);
+  const miss = problems().filter(p=>!p[1]);
+  if(miss.length) L.push("","⚠ Still to confirm: "+miss.map(p=>p[0]).join("; "));
+  return L.join("\n");
+}
+
+const DEPOSIT = 50;
+const fv = id => $(id).value.trim();
+function addrText(){ return [fv("cAddr"), fv("cTown"), fv("cPost").toUpperCase()].filter(Boolean).join(", "); }
+function fmtDateLong(d){ try{ return new Date(d+"T12:00").toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long",year:"numeric"}); }catch(e){ return d; } }
+function fmtTime(t){ if(!t) return ""; const [h,m]=t.split(":").map(Number); return `${((h+11)%12)+1}:${String(m).padStart(2,"0")}${h<12?"am":"pm"}`; }
+const MENU_NAME = {finger:"Finger Buffet", hot:"Hot Food with Salad Buffet", celeb:"Celebrations Menu"};
+
+/* Structured order for the customer PDF */
+function orderSections(){
+  const out = [];
+  if(S.menu==="finger"){
+    const opt = (n,sub,val)=> sub ? `${n} (${val||sub.choices[0]})` : n;
+    const sav = Object.keys(S.sav).map(k=>{ const x=SAVOURY.find(y=>y[0]===k); return opt(k,x[2],S.sav[k]); });
+    out.push({t:"Savoury", items:["Selection of sandwiches", ...sav.slice(0,NEED)]});
+    if(sav.length>NEED) out.push({t:"Extra savoury", items:sav.slice(NEED)});
+    const pr = PREMIUM.filter(([n])=>n in S.prem).map(([n,sub])=> sub&&sub.multi&&(S.prem[n]||[]).length ? `${n}: ${S.prem[n].join(", ")}` : n);
+    if(pr.length) out.push({t:"Premium add-ons", items:pr});
+    const des = Object.keys(S.des).map(k=>{ const x=DESSERT.find(y=>y[0]===k); return opt(k,x[1],S.des[k]); });
+    out.push({t:"Desserts", items:["Fresh fruit platter", ...des, ...DESSERT_PREM.filter(([n])=>n in S.desPrem).map(([n])=>n)]});
+  } else if(S.menu==="hot"){
+    const H=S.hot, ord={a:0,b:1,c:2};
+    out.push({t:"Main courses", items:Object.keys(H.mains).sort((x,y)=>ord[mainSection(x)]-ord[mainSection(y)]).map(n=> n===PAELLA ? `Paella – ${H.mains[n]||"Chicken and chorizo"}` : n)});
+    if(H.side) out.push({t:"Hot side", items:[H.side]});
+    out.push({t:"Salads", items:Object.keys(H.salads)});
+    out.push({t:"Dessert", items:Object.keys(H.des)});
+  } else {
+    const pk = CELEB.find(p=>p.id===S.celeb.pkg);
+    out.push({t: pk ? pk.full : "Menu", items: pk ? pk.items : []});
+    out.push({t:"Desserts", items:Object.keys(S.celeb.des)});
+  }
+  return out.filter(x=>x.items.length);
+}
+function priceRows(){
+  const c = calc(), r = [];
+  if(S.menu==="finger"){
+    r.push([`Finger buffet – ${c.g} × ${money(BASE)}`, BASE*c.g]);
+    if(c.extraN) r.push([`Extra savoury (${c.extraN} × £1 pp)`, c.extraN*EXTRA*c.g]);
+    if(c.premN) r.push([`Premium add-ons (${c.premN} × £2 pp)`, c.premN*UP*c.g]);
+    if(c.desExtraN) r.push([`Extra desserts (${c.desExtraN} × £1 pp)`, c.desExtraN*EXTRA*c.g]);
+    if(c.desPremN) r.push([`Dessert add-ons (${c.desPremN} × £2 pp)`, c.desPremN*UP*c.g]);
+    if(S.crockery) r.push([`Crockery (£2 pp)`, UP*c.g]);
+  } else if(S.menu==="hot"){
+    r.push([`Hot food with salad – ${c.g} × ${money(HOT_BASE)}`, HOT_BASE*c.g]);
+    if(S.hot.crockery) r.push([`Crockery & cutlery (£3 pp)`, HOT_CROCK*c.g]);
+  } else {
+    if(c.pk) r.push([`${c.pk.name} menu – ${c.g} × ${money(c.base)}`, c.base*c.g]);
+    if(S.celeb.crockery) r.push([`Crockery & cutlery (£3 pp)`, CELEB_CROCK*c.g]);
+  }
+  return {rows:r, total:c.total, pp:c.pp, g:c.g};
+}
+
+/* ---------- Google Calendar ---------- */
+function calendarUrl(){
+  const d = fv("cDate"), t = fv("cTime"), c = calc();
+  const ymd = d.replace(/-/g,"");
+  let dates;
+  if(t){
+    const start = new Date(`${d}T${t}:00`), end = new Date(start.getTime()+2*3600e3);
+    const f = x => `${x.getFullYear()}${String(x.getMonth()+1).padStart(2,"0")}${String(x.getDate()).padStart(2,"0")}T${String(x.getHours()).padStart(2,"0")}${String(x.getMinutes()).padStart(2,"0")}00`;
+    dates = `${f(start)}/${f(end)}`;
+  } else {
+    const n = new Date(`${d}T12:00:00`); n.setDate(n.getDate()+1);
+    dates = `${ymd}/${n.getFullYear()}${String(n.getMonth()+1).padStart(2,"0")}${String(n.getDate()).padStart(2,"0")}`;
+  }
+  const title = `${fv("cName")} – ${MENU_NAME[S.menu]} (${c.g}) – ${S.fulfil==="deliver"?"Delivery":"Collection"}`;
+  let details = orderText(); if(details.length>1800) details = details.slice(0,1800)+"\n…";
+  const q = new URLSearchParams({action:"TEMPLATE", text:title, dates, details, location: S.fulfil==="deliver" ? addrText() : "Collection – Dilly's Kitchen", ctz:"Europe/London"});
+  return "https://calendar.google.com/calendar/render?"+q.toString();
+}
+function openCalendar(){
+  if(!fv("cName") || !fv("cDate")){ toast("Add customer name and date first"); return false; }
+  const w = window.open(calendarUrl(), "_blank");
+  if(!w) location.href = calendarUrl();
+  return true;
+}
+
+/* ---------- Customer PDF ---------- */
+async function buildPdf(){
+  const {PDFDocument, StandardFonts, rgb} = PDFLib;
+  const doc = await PDFDocument.create();
+  doc.setTitle(`Dilly's Kitchen – ${MENU_NAME[S.menu]} – ${fv("cName")||"Order"}`);
+  doc.setAuthor("Dilly's Kitchen");
+  const F = await doc.embedFont(StandardFonts.Helvetica), B = await doc.embedFont(StandardFonts.HelveticaBold), I = await doc.embedFont(StandardFonts.HelveticaOblique);
+  const W=595.28, H=841.89, M=48;
+  const GREEN=rgb(.663,.741,.298), GREEND=rgb(.498,.576,.188), GL=rgb(.945,.961,.875), RED=rgb(.851,.212,.212), INK=rgb(.15,.165,.133), MUTE=rgb(.42,.44,.39), LINE=rgb(.89,.9,.855), WHITE=rgb(1,1,1);
+  const clean = s => String(s).replace(/[^\x20-\x7E\u00A0-\u00FF£–—•’‘“”…]/g,"");
+  let page, y;
+  const heart = (x,yy,size,color) => page.drawSvgPath("M16 29 2.6 15.6A8 8 0 0 1 16 4.3a8 8 0 0 1 13.4 11.3z",{x,y:yy,scale:size/32,color});
+  const wrap = (text,font,size,maxW) => { const words=clean(text).split(" "), lines=[]; let cur="";
+    for(const w of words){ const t=cur?cur+" "+w:w; if(font.widthOfTextAtSize(t,size)>maxW && cur){ lines.push(cur); cur=w; } else cur=t; } if(cur) lines.push(cur); return lines; };
+  const txt = (t,x,yy,font=F,size=10,color=INK) => page.drawText(clean(t),{x,y:yy,font,size,color});
+  const right = (t,xr,yy,font=F,size=10,color=INK) => txt(t, xr-font.widthOfTextAtSize(clean(t),size), yy, font, size, color);
+  const footer = () => {
+    page.drawRectangle({x:0,y:0,width:W,height:46,color:GL});
+    heart(M,31,15,RED);
+    txt("Thank you for choosing Dilly's Kitchen", M+22, 22, B, 10.5, GREEND);
+    txt(crockOn() ? (S.menu==="finger" ? "Crockery & tablecloth included" : "Crockery, cutlery & tablecloth included") : (S.menu==="finger" ? "Disposable plates, napkins & tablecloth included" : "Disposable plates, napkins, cutlery & tablecloth included"), M+22, 10, F, 8.5, MUTE);
+    right("Questions? Call 01792 205300", W-M, 17, B, 10, INK);
+  };
+  const newPage = (first) => {
+    page = doc.addPage([W,H]);
+    if(first){
+      page.drawRectangle({x:0,y:H-112,width:W,height:112,color:GREEN});
+      txt("DILLY'S KITCHEN", M, H-56, B, 30, WHITE);
+      heart(M + B.widthOfTextAtSize("DILLY'S KITCHEN",30) + 8, H-32, 28, RED);
+      txt(MENU_NAME[S.menu].toUpperCase(), M, H-78, B, 12, WHITE);
+      txt("Your buffet order", M, H-96, I, 11, WHITE);
+      const ref = "Order date " + new Date().toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"});
+      right(ref, W-M, H-96, F, 9.5, WHITE);
+      y = H-134;
+    } else {
+      page.drawRectangle({x:0,y:H-36,width:W,height:36,color:GREEN});
+      txt("DILLY'S KITCHEN  ·  "+MENU_NAME[S.menu]+" (continued)", M, H-23, B, 11, WHITE);
+      y = H-66;
+    }
+    footer();
+  };
+  const need = h => { if(y-h < 50) newPage(false); };
+  newPage(true);
+
+  // ---- Details cards
+  const colW = (W-2*M-14)/2, cardTop = y;
+  const left = [["Prepared for", fv("cName")||"—"]]; if(fv("cPhone")) left.push(["Phone", fv("cPhone")]); if(fv("cEmail")) left.push(["Email", fv("cEmail")]);
+  const rightC = [["Date", fv("cDate")?fmtDateLong(fv("cDate")):"To be confirmed"]];
+  if(fv("cTime")) rightC.push(["Time", fmtTime(fv("cTime"))]);
+  rightC.push(["Guests", String(calc().g)]);
+  rightC.push([S.fulfil==="deliver"?"Delivery to":"Collection", S.fulfil==="deliver" ? (addrText()||"Address to be confirmed") : "From Dilly's Kitchen"]);
+  if(S.fulfil==="deliver" && fv("cDelNote")) rightC.push(["Delivery notes", fv("cDelNote")]);
+  const cardH = cols => cols.reduce((h,[k,v])=>h+11+wrap(v,B,10.5,colW-24).length*13+5, 16);
+  const ch = Math.max(cardH(left), cardH(rightC));
+  [[left,M],[rightC,M+colW+14]].forEach(([rows,x])=>{
+    page.drawRectangle({x,y:cardTop-ch,width:colW,height:ch,borderColor:LINE,borderWidth:1,color:WHITE});
+    let yy = cardTop-18;
+    rows.forEach(([k,v])=>{ txt(k.toUpperCase(), x+12, yy, B, 7.5, MUTE); yy-=12; wrap(v,B,10.5,colW-24).forEach(l=>{ txt(l,x+12,yy,B,10.5,INK); yy-=13; }); yy-=5; });
+  });
+  y = cardTop - ch - 22;
+
+  // ---- Menu
+  txt("Your menu", M, y, B, 17, RED); y -= 8;
+  page.drawLine({start:{x:M,y},end:{x:W-M,y},thickness:1.5,color:GREEN}); y -= 19;
+  for(const sec of orderSections()){
+    need(40);
+    txt(sec.t, M, y, B, 12, GREEND); y -= 16;
+    const two = sec.items.length > 3 && sec.items.every(i=>F.widthOfTextAtSize(clean(i),10.5) < colW-20);
+    if(two){
+      const half = Math.ceil(sec.items.length/2);
+      for(let i=0;i<half;i++){ need(15);
+        [sec.items[i], sec.items[i+half]].forEach((it,j)=>{ if(!it) return; const x=M+4+j*(colW+14); page.drawCircle({x:x+2,y:y+3.5,size:2,color:GREEN}); txt(it,x+10,y,F,10.5); });
+        y -= 14; }
+    } else {
+      for(const it of sec.items){ const lines = wrap(it,F,10.5,W-2*M-20); need(lines.length*14);
+        page.drawCircle({x:M+6,y:y+3.5,size:2,color:GREEN});
+        lines.forEach(l=>{ txt(l,M+14,y,F,10.5); y-=14; }); y-=1; }
+    }
+    y -= 6;
+  }
+  const diet = fv("diet"), notes = fv("notes");
+  if(diet || notes){
+    need(50);
+    txt("Notes", M, y, B, 12, GREEND); y -= 16;
+    if(diet) wrap("Dietary / allergies: "+diet, F, 10.5, W-2*M).forEach(l=>{ need(14); txt(l,M,y,F,10.5); y-=14; });
+    if(notes) wrap(notes, F, 10.5, W-2*M).forEach(l=>{ need(14); txt(l,M,y,F,10.5); y-=14; });
+    y -= 10;
+  }
+
+  // ---- Price box
+  const P = priceRows(), dep = S.deposit;
+  const boxH = 28 + P.rows.length*16 + 36 + (dep?38:0) + 10;
+  need(boxH+4);
+  const bt = y;
+  page.drawRectangle({x:M,y:bt-boxH,width:W-2*M,height:boxH,color:GL,borderColor:GREEN,borderWidth:1});
+  let yy = bt-22;
+  txt("Price", M+16, yy, B, 13, INK); right(S.menu==="celeb" ? "" : "All prices include VAT", W-M-16, yy, I, 9, MUTE); yy-=19;
+  P.rows.forEach(([k,v])=>{ txt(k, M+16, yy, F, 10.5, INK); right(money(v), W-M-16, yy, F, 10.5); yy-=16; });
+  page.drawLine({start:{x:M+16,y:yy+8},end:{x:W-M-16,y:yy+8},thickness:1,color:GREEN}); yy-=14;
+  txt("Total", M+16, yy, B, 15, INK); right(money(P.total), W-M-16, yy, B, 18, INK);
+  txt(`${money(P.pp)} per person`, M+70, yy+1, F, 9.5, MUTE); yy-=21;
+  if(dep){
+    txt("Deposit paid – thank you", M+16, yy, F, 10.5, GREEND); right("– "+money(DEPOSIT), W-M-16, yy, B, 10.5, GREEND); yy-=20;
+    txt("Balance due", M+16, yy, B, 12.5, RED); right(money(Math.max(0,P.total-DEPOSIT)), W-M-16, yy, B, 14, RED);
+  }
+  y = bt - boxH - 18;
+  if(!dep){ need(16); txt("A £50 deposit secures your booking – call us on 01792 205300.", M, y, I, 9.5, MUTE); }
+
+  // page numbers
+  const pages = doc.getPages();
+  if(pages.length>1) pages.forEach((pg,i)=>{ const t=`Page ${i+1} of ${pages.length}`; pg.drawText(t,{x:W/2-F.widthOfTextAtSize(t,8)/2,y:52,font:F,size:8,color:MUTE}); });
+  return await doc.save();
+}
+async function customerPdf(){
+  const btns = [$("pdfBtn"),$("pdfBtn2")]; btns.forEach(b=>{ b.disabled=true; b.dataset.t=b.textContent; b.textContent="Making PDF…"; });
+  try{
+    const bytes = await buildPdf();
+    const nm = `Dillys-Kitchen-${(fv("cName")||"order").replace(/[^A-Za-z0-9]+/g,"-")}${fv("cDate")?"-"+fv("cDate"):""}.pdf`;
+    const file = new File([bytes], nm, {type:"application/pdf"});
+    if(navigator.canShare && navigator.canShare({files:[file]})){
+      try{ await navigator.share({files:[file], title:"Your Dilly's Kitchen order"}); return; }
+      catch(e){ if(e.name==="AbortError") return; }
+    }
+    const url = URL.createObjectURL(file);
+    const a = document.createElement("a"); a.href=url; a.download=nm; document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url), 60000);
+    toast("PDF ready ✓");
+  } catch(e){ console.error(e); toast("Couldn't make the PDF here"); }
+  finally{ btns.forEach(b=>{ b.disabled=false; b.textContent=b.dataset.t; }); }
+}
+
+function toast(m){ const t=$("toast"); t.textContent=m; t.classList.add("show"); clearTimeout(toast._t); toast._t=setTimeout(()=>t.classList.remove("show"),1800); }
+
+// events
+document.addEventListener("click", e=>{
+  const sub = e.target.closest("[data-sub]");
+  if(sub){
+    e.stopPropagation();
+    const key = sub.dataset.sub, val = sub.dataset.val;
+    const p = PREMIUM.find(x=>x[0]===key);
+    if(p && p[1].multi){
+      const arr = S.prem[key] || [];
+      S.prem[key] = arr.includes(val) ? arr.filter(x=>x!==val) : arr.concat(val);
+    } else if(S.menu==="hot" && key in S.hot.mains) S.hot.mains[key] = val;
+    else if(key in S.sav) S.sav[key] = val;
+    else if(key in S.prem) S.prem[key] = val;
+    else if(key in S.des) S.des[key] = val;
+    render(); return;
+  }
+  const it = e.target.closest(".item[data-kind]");
+  if(it){
+    const k = it.dataset.key, kind = it.dataset.kind, H = S.hot;
+    if(kind==="cdes"){
+      if(k in S.celeb.des) delete S.celeb.des[k]; else S.celeb.des[k] = true;
+    } else if(kind==="main"){
+      if(k in H.mains) delete H.mains[k];
+      else if(Object.keys(H.mains).length>=HOT_MAINS) toast("3 mains already chosen — untick one first");
+      else if(mainSection(k)==="a" && Object.keys(H.mains).some(n=>mainSection(n)==="a")) toast("Only one main from 1a");
+      else H.mains[k] = k===PAELLA ? "Chicken and chorizo" : true;
+    } else if(kind==="side"){ H.side = H.side===k ? null : k;
+    } else if(kind==="salad"){
+      if(k in H.salads) delete H.salads[k];
+      else if(Object.keys(H.salads).length>=HOT_SALADS) toast("5 salads already chosen — untick one first");
+      else H.salads[k] = true;
+    } else if(kind==="hdes"){
+      const need = hotDessertNeed();
+      if(k in H.des) delete H.des[k];
+      else if(Object.keys(H.des).length>=need) toast(need===1 ? "1 dessert for 30 guests or fewer" : "2 desserts already chosen");
+      else H.des[k] = true;
+    } else if(kind==="sav"){
+      if(k in S.sav) delete S.sav[k];
+      else { const d=SAVOURY.find(x=>x[0]===k)[2]; S.sav[k] = d? d.choices[0] : true;
+        if(Object.keys(S.sav).length>NEED) toast("Extra item added (+£1 pp)"); }
+    } else if(kind==="prem"){
+      if(k in S.prem) delete S.prem[k];
+      else { const d=PREMIUM.find(x=>x[0]===k)[1]; S.prem[k] = d&&d.multi ? [] : true; }
+    } else if(kind==="desprem"){
+      if(k in S.desPrem) delete S.desPrem[k]; else S.desPrem[k] = true;
+    } else if(kind==="des"){
+      if(k in S.des) delete S.des[k];
+      else { const d=DESSERT.find(x=>x[0]===k)[1]; S.des[k] = d? d.choices[0] : true;
+        if(Object.keys(S.des).length>1) toast("Extra dessert added (+£1 pp)"); }
+    }
+    render(); return;
+  }
+  const f = e.target.closest("[data-f]"); if(f){ S.filter=f.dataset.f; render(); return; }
+  const hf = e.target.closest("[data-hf]"); if(hf){ S.hot.filter=hf.dataset.hf; render(); return; }
+  const ff = e.target.closest("[data-fulfil]"); if(ff){ S.fulfil = ff.dataset.fulfil; render(); return; }
+  const pk = e.target.closest("[data-pkg]"); if(pk){ S.celeb.pkg = S.celeb.pkg===pk.dataset.pkg ? null : pk.dataset.pkg; render(); return; }
+  const tb = e.target.closest("[data-menu]"); if(tb){ S.menu=tb.dataset.menu; render(); window.scrollTo({top:0}); return; }
+  const st = e.target.closest("[data-step]");
+  if(st){ const g=$("guests"); g.value=Math.max(1,(parseInt(g.value)||0)+parseInt(st.dataset.step)); render(); }
+});
+$("crockery").addEventListener("click", ()=>{ if(S.menu==="hot") S.hot.crockery=!S.hot.crockery; else if(S.menu==="celeb") S.celeb.crockery=!S.celeb.crockery; else S.crockery=!S.crockery; render(); });
+document.querySelectorAll("input,textarea").forEach(el=>el.addEventListener("input", ()=>{ if(el.id==="guests" && S.menu!=="finger") render(); else { summary(); save(); } }));
+
+$("depBox").addEventListener("click", ()=>{
+  S.deposit = !S.deposit; render();
+  if(S.deposit){ if(openCalendar()) toast("Deposit ticked – save the event in Google Calendar"); }
+});
+$("calBtn").onclick = ()=>openCalendar();
+$("pdfBtn").onclick = customerPdf; $("pdfBtn2").onclick = customerPdf;
+const openReview = ()=>{ $("out").textContent = orderText(); $("modal").classList.add("open"); };
+$("reviewBtn").onclick = openReview; $("mReview").onclick = openReview;
+$("closeBtn").onclick = ()=>$("modal").classList.remove("open");
+$("modal").addEventListener("click", e=>{ if(e.target.id==="modal") $("modal").classList.remove("open"); });
+$("copyBtn").onclick = async ()=>{
+  const txt = orderText();
+  try{ await navigator.clipboard.writeText(txt); toast("Order copied ✓"); }
+  catch(e){
+    const r=document.createRange(); r.selectNodeContents($("out")); const s=getSelection(); s.removeAllRanges(); s.addRange(r);
+    toast("Text selected — copy it manually");
+  }
+};
+$("resetBtn").onclick = ()=>$("confirmModal").classList.add("open");
+$("confirmNo").onclick = ()=>$("confirmModal").classList.remove("open");
+$("confirmYes").onclick = ()=>{
+  const m = S.menu; S = blank(); S.menu = m;
+  ["cName","cPhone","cEmail","cDate","cTime","cAddr","cTown","cPost","cDelNote","diet","notes"].forEach(id=>$(id).value="");
+  $("guests").value = 20;
+  $("confirmModal").classList.remove("open");
+  render(); window.scrollTo({top:0,behavior:"smooth"}); toast("New order started");
+};
+
+// draft persistence (this browser only)
+const FIELDS = ["cName","cPhone","cEmail","cDate","cTime","cAddr","cTown","cPost","cDelNote","guests","diet","notes"];
+function save(){ try{ const f={}; FIELDS.forEach(id=>f[id]=$(id).value); localStorage.setItem("dillysDraft", JSON.stringify({S,f})); }catch(e){} }
+function load(){ try{ const d=JSON.parse(localStorage.getItem("dillysDraft")); if(d){ S=Object.assign(blank(), d.S); S.hot=Object.assign(hotBlank(), S.hot||{}); S.celeb=Object.assign(celebBlank(), S.celeb||{}); if(!d.S.fulfil && d.f && d.f.cAddr) S.fulfil="deliver"; if(S.dessert){ if(DESSERT_PREM.some(x=>x[0]===S.dessert)) S.desPrem[S.dessert]=true; else S.des[S.dessert]=(S.dessertOpt||{})[S.dessert]||true; S.dessert=null; } FIELDS.forEach(id=>{ if(d.f[id]!=null) $(id).value=d.f[id]; }); } }catch(e){} }
+load(); render();
+if("serviceWorker" in navigator){ window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{})); }
+</script>
+</body>
+</html>
